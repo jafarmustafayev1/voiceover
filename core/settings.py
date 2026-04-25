@@ -129,8 +129,8 @@ AUTH_USER_MODEL = 'accounts.User'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STRIPE_PUBLIC_KEY = 'pk_test_51TQ2evEWZfQGrE1ROooid0kSqfDucJTNRTx7eyDADtUUcm3lNrOnyErHFn4hwiw8xeBYvxygIKriTwthSOxpziN3002PeSOpiw'
-STRIPE_SECRET_KEY = 'sk_test_51TQ2evEWZfQGrE1Rt5oWbO62vQLrDIBHQWwhTqttzNVQ6gRYUBDfcuW5NROzqgvCKikete7ssohHMF1jF2QiIfDP00W0URnPZK'
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 
 import os
