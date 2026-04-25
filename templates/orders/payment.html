@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="mb-4">To'lov</h3>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Loyiha:</span>
+                        <span class="fw-medium">{{ order.title }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Actor:</span>
+                        <span>{{ order.actor.user.username }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">So'z soni:</span>
+                        <span>{{ order.word_count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Narx/so'z:</span>
+                        <span>${{ order.actor.price_per_word }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-bold">Jami:</span>
+                        <span class="fw-bold text-success fs-5">${{ order.total_price }}</span>
+                    </div>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">
+                        💳 Stripe orqali to'lash
+                    </button>
+                </form>
+
+                <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary w-100 mt-2">
+                    Bekor qilish
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
