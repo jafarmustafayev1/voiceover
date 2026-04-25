@@ -1,48 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoiceMarket</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root{--bg:#08080f;--bg2:#0f0f1a;--bg3:#161622;--bd:#ffffff12;--bd2:#ffffff20;--t:#f4f4ff;--t2:#9090bb;--t3:#6060aa;--ac:#7c6ff7;--ac2:#9b95ff;--gr:#00e5b4}
+        [data-theme="light"]{--bg:#fafafa;--bg2:#ffffff;--bg3:#f2f2fa;--bd:#0000001a;--bd2:#00000028;--t:#0a0a18;--t2:#55558a;--t3:#8888cc;--ac:#5b52e0;--ac2:#4a43cc;--gr:#00a87a}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{background:var(--bg);color:var(--t);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;transition:background 0.3s,color 0.3s}
+        a{text-decoration:none;color:inherit}
+
+        /* NAVBAR */
+        nav{background:var(--bg2);border-bottom:0.5px solid var(--bd);padding:0 2rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+        .logo{font-size:17px;font-weight:600;color:var(--ac2);letter-spacing:-0.5px;display:flex;align-items:center;gap:8px}
+        .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--gr)}
+        .nav-r{display:flex;align-items:center;gap:6px}
+        .nl{font-size:13px;color:var(--t2);padding:6px 12px;border-radius:8px;cursor:pointer;border:none;background:transparent;transition:all 0.15s}
+        .nl:hover{color:var(--t);background:var(--bg3)}
+        .nbtn{padding:7px 16px;border-radius:8px;font-size:13px;cursor:pointer;border:0.5px solid var(--bd2);background:transparent;color:var(--t2);transition:all 0.15s}
+        .nbtn:hover{color:var(--t);border-color:var(--ac)}
+        .nbtn.pr{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:500}
+        .nbtn.pr:hover{background:var(--ac2)}
+        .divider{width:0.5px;height:18px;background:var(--bd2);margin:0 4px}
+        .theme-btn{width:38px;height:22px;border-radius:11px;border:0.5px solid var(--bd2);background:var(--bg3);cursor:pointer;position:relative;display:flex;align-items:center;padding:2px 3px}
+        .tdot{width:17px;height:17px;border-radius:50%;background:var(--ac2);transition:transform 0.25s cubic-bezier(.34,1.56,.64,1);font-size:9px;display:flex;align-items:center;justify-content:center}
+        [data-theme="light"] .tdot{transform:translateX(16px)}
+
+        /* MESSAGES */
+        .messages{padding:1rem 2rem 0}
+        .msg{padding:10px 16px;border-radius:8px;font-size:13px;margin-bottom:8px;border:0.5px solid}
+        .msg.success{background:#00e5b420;border-color:#00e5b440;color:var(--gr)}
+        .msg.error{background:#ff444420;border-color:#ff444440;color:#ff8888}
+        .msg.info{background:#7c6ff720;border-color:#7c6ff740;color:var(--ac2)}
+        .msg.warning{background:#ffaa0020;border-color:#ffaa0040;color:#ffcc44}
+
+        /* CONTAINER */
+        .container{max-width:1100px;margin:0 auto;padding:2rem}
+
+        /* BUTTONS */
+        .btn{padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;border:none;font-weight:500;transition:all 0.15s}
+        .btn-primary{background:var(--ac);color:#fff}
+        .btn-primary:hover{background:var(--ac2)}
+        .btn-secondary{background:transparent;color:var(--t);border:0.5px solid var(--bd2)}
+        .btn-secondary:hover{border-color:var(--ac);color:var(--ac2)}
+        .btn-success{background:#00e5b4;color:#001a12}
+        .btn-sm{padding:6px 14px;font-size:12px}
+
+        /* CARDS */
+        .card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:12px;padding:1.5rem;transition:border-color 0.15s}
+        .card:hover{border-color:var(--bd2)}
+
+        /* FORMS */
+        .form-group{margin-bottom:1.25rem}
+        .form-label{display:block;font-size:13px;color:var(--t2);margin-bottom:6px}
+        input,select,textarea{width:100%;padding:10px 14px;border-radius:8px;border:0.5px solid var(--bd2);background:var(--bg3);color:var(--t);font-size:14px;outline:none;transition:border-color 0.15s}
+        input:focus,select:focus,textarea:focus{border-color:var(--ac)}
+        textarea{resize:vertical;min-height:100px}
+
+        /* BADGES */
+        .badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+        .badge-pending{background:#ffaa0020;color:#ffcc44;border:0.5px solid #ffaa0040}
+        .badge-accepted{background:#7c6ff720;color:var(--ac2);border:0.5px solid #7c6ff740}
+        .badge-progress{background:#00e5b420;color:var(--gr);border:0.5px solid #00e5b440}
+        .badge-delivered{background:#00e5b420;color:var(--gr);border:0.5px solid #00e5b440}
+        .badge-completed{background:#00e5b430;color:var(--gr);border:0.5px solid #00e5b450}
+        .badge-cancelled{background:#ff444420;color:#ff8888;border:0.5px solid #ff444440}
+
+        /* TAGS */
+        .tag{padding:3px 10px;border-radius:20px;font-size:11px;background:var(--bg3);border:0.5px solid var(--bd);color:var(--t2)}
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark px-4">
-        <a class="navbar-brand fw-bold" href="{% url 'home' %}">VoiceMarket</a>
-        <div class="d-flex align-items-center gap-2">
-            <a href="{% url 'actor_list' %}" class="btn btn-outline-light btn-sm">
-                Actors
-            </a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'my_orders' %}" class="btn btn-outline-light btn-sm">
-                    Buyurtmalar
-                </a>
-                {% if user.is_voice_actor %}
-                    <a href="{% url 'profile' %}" class="btn btn-outline-light btn-sm">
-                        Profilim
-                    </a>
-                {% endif %}
-                <span class="text-white">{{ user.username }}</span>
-                <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
-                    Chiqish
-                </a>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">Kirish</a>
-                <a href="{% url 'register' %}" class="btn btn-primary btn-sm">Ro'yxatdan o'tish</a>
+
+<nav>
+    <a href="{% url 'home' %}" class="logo">
+        <div class="logo-dot"></div>
+        VoiceMarket
+    </a>
+    <div class="nav-r">
+        {% if user.is_authenticated %}
+            <a href="{% url 'actor_list' %}" class="nl">Actors</a>
+            <a href="{% url 'my_orders' %}" class="nl">Buyurtmalar</a>
+            {% if user.is_voice_actor %}
+                <a href="{% url 'profile' %}" class="nl">Profilim</a>
             {% endif %}
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
+            <div class="divider"></div>
+            <button class="theme-btn" onclick="toggleTheme()">
+                <div class="tdot" id="tdot">☀</div>
+            </button>
+            <span style="font-size:13px;color:var(--t2);padding:0 4px">{{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="nbtn">Chiqish</a>
+        {% else %}
+            <button class="theme-btn" onclick="toggleTheme()">
+                <div class="tdot" id="tdot">☀</div>
+            </button>
+            <a href="{% url 'login' %}" class="nbtn">Kirish</a>
+            <a href="{% url 'register' %}" class="nbtn pr">Ro'yxatdan o'tish</a>
         {% endif %}
-
-        {% block content %}{% endblock %}
     </div>
+</nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="msg {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+<script>
+    function toggleTheme(){
+        var html=document.documentElement
+        var dot=document.getElementById('tdot')
+        if(html.getAttribute('data-theme')==='dark'){
+            html.setAttribute('data-theme','light')
+            dot.textContent='☾'
+            localStorage.setItem('theme','light')
+        } else {
+            html.setAttribute('data-theme','dark')
+            dot.textContent='☀'
+            localStorage.setItem('theme','dark')
+        }
+    }
+    var saved=localStorage.getItem('theme')
+    if(saved){
+        document.documentElement.setAttribute('data-theme',saved)
+        if(saved==='light'){
+            var d=document.getElementById('tdot')
+            if(d) d.textContent='☾'
+        }
+    }
+</script>
 </body>
 </html>

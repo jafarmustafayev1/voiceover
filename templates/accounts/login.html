@@ -1,28 +1,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="mb-4 text-center">Kirish</h3>
-                <form method="POST">
-                    {% csrf_token %}
-                    {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label fw-medium">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.errors %}
-                                <div class="text-danger small">{{ field.errors }}</div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                    <button type="submit" class="btn btn-primary w-100">Kirish</button>
-                </form>
-                <p class="text-center mt-3 mb-0">
-                    Akkaunt yo'qmi? <a href="{% url 'register' %}">Ro'yxatdan o'tish</a>
-                </p>
-            </div>
+<style>
+.auth-wrap{min-height:calc(100vh - 58px);display:flex;align-items:center;justify-content:center;padding:2rem}
+.auth-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:16px;padding:2.5rem;width:100%;max-width:420px}
+.auth-logo{text-align:center;margin-bottom:2rem}
+.auth-logo-dot{width:10px;height:10px;border-radius:50%;background:var(--gr);display:inline-block;margin-right:6px}
+.auth-title{font-size:22px;font-weight:600;letter-spacing:-0.5px;color:var(--t);margin-bottom:6px;text-align:center}
+.auth-sub{font-size:14px;color:var(--t2);text-align:center;margin-bottom:2rem}
+.auth-footer{text-align:center;margin-top:1.5rem;font-size:13px;color:var(--t2)}
+.auth-footer a{color:var(--ac2)}
+.auth-footer a:hover{text-decoration:underline}
+.field-error{font-size:12px;color:#ff8888;margin-top:4px}
+.divider{display:flex;align-items:center;gap:12px;margin:1.5rem 0}
+.divider-line{flex:1;height:0.5px;background:var(--bd)}
+.divider-text{font-size:12px;color:var(--t3)}
+</style>
+
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span class="auth-logo-dot"></span>
+            <span style="font-size:15px;font-weight:600;color:var(--ac2)">VoiceMarket</span>
+        </div>
+        <div class="auth-title">Welcome back</div>
+        <div class="auth-sub">Sign in to your account</div>
+
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="field-error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem">
+                Sign in
+            </button>
+        </form>
+
+        <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">or</span>
+            <div class="divider-line"></div>
+        </div>
+
+        <a href="{% url 'register' %}" class="btn btn-secondary" style="width:100%;text-align:center;display:block">
+            Create new account
+        </a>
+
+        <div class="auth-footer">
+            Don't have an account? <a href="{% url 'register' %}">Sign up free</a>
         </div>
     </div>
 </div>

@@ -1,29 +1,94 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="mb-4 text-center">Ro'yxatdan o'tish</h3>
-                <form method="POST">
-                    {% csrf_token %}
-                    {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label fw-medium">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.errors %}
-                                <div class="text-danger small">{{ field.errors }}</div>
-                            {% endif %}
+<style>
+.auth-wrap{min-height:calc(100vh - 58px);display:flex;align-items:center;justify-content:center;padding:2rem}
+.auth-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:16px;padding:2.5rem;width:100%;max-width:440px}
+.auth-logo{text-align:center;margin-bottom:2rem}
+.auth-logo-dot{width:10px;height:10px;border-radius:50%;background:var(--gr);display:inline-block;margin-right:6px}
+.auth-title{font-size:22px;font-weight:600;letter-spacing:-0.5px;color:var(--t);margin-bottom:6px;text-align:center}
+.auth-sub{font-size:14px;color:var(--t2);text-align:center;margin-bottom:2rem}
+.auth-footer{text-align:center;margin-top:1.5rem;font-size:13px;color:var(--t2)}
+.auth-footer a{color:var(--ac2)}
+.auth-footer a:hover{text-decoration:underline}
+.field-error{font-size:12px;color:#ff8888;margin-top:4px}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.role-card{border:0.5px solid var(--bd2);border-radius:10px;padding:1rem;cursor:pointer;text-align:center;transition:all 0.15s;background:var(--bg3)}
+.role-card:hover{border-color:var(--ac)}
+.role-card.selected{border-color:var(--ac);background:var(--bg2)}
+.role-icon{font-size:24px;margin-bottom:6px}
+.role-title{font-size:13px;font-weight:500;color:var(--t)}
+.role-desc{font-size:11px;color:var(--t2);margin-top:2px}
+</style>
+
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span class="auth-logo-dot"></span>
+            <span style="font-size:15px;font-weight:600;color:var(--ac2)">VoiceMarket</span>
+        </div>
+        <div class="auth-title">Create your account</div>
+        <div class="auth-sub">Join thousands of voice professionals</div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for field in form %}
+                {% if field.name == 'role' %}
+                    <div class="form-group">
+                        <label class="form-label">I am a...</label>
+                        <div class="role-grid">
+                            <label class="role-card {% if field.value == 'client' %}selected{% endif %}"
+                                   onclick="selectRole('client')">
+                                <input type="radio" name="role" value="client"
+                                    {% if field.value == 'client' or not field.value %}checked{% endif %}
+                                    style="display:none">
+                                <div class="role-icon">🎯</div>
+                                <div class="role-title">Client</div>
+                                <div class="role-desc">I need a voice actor</div>
+                            </label>
+                            <label class="role-card {% if field.value == 'voice_actor' %}selected{% endif %}"
+                                   onclick="selectRole('voice_actor')">
+                                <input type="radio" name="role" value="voice_actor"
+                                    {% if field.value == 'voice_actor' %}checked{% endif %}
+                                    style="display:none">
+                                <div class="role-icon">🎙</div>
+                                <div class="role-title">Voice Actor</div>
+                                <div class="role-desc">I offer voice services</div>
+                            </label>
                         </div>
-                    {% endfor %}
-                    <button type="submit" class="btn btn-primary w-100">Ro'yxatdan o'tish</button>
-                </form>
-                <p class="text-center mt-3 mb-0">
-                    Akkaunt bormi? <a href="{% url 'login' %}">Kirish</a>
-                </p>
-            </div>
+                        {% if field.errors %}
+                            <div class="field-error">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="field-error">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem">
+                Create account
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? <a href="{% url 'login' %}">Sign in</a>
         </div>
     </div>
 </div>
+
+<script>
+function selectRole(role){
+    document.querySelectorAll('.role-card').forEach(function(c){
+        c.classList.remove('selected')
+    })
+    event.currentTarget.classList.add('selected')
+}
+</script>
 {% endblock %}

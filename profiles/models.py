@@ -7,9 +7,10 @@ def audio_upload_path(instance, filename):
 
 
 class VoiceActorProfile(models.Model):
-
     LANGUAGE_CHOICES = [
         ('en', 'English'),
+        ('ru', 'Russian'),
+        ('uz', 'Uzbek'),
         ('es', 'Spanish'),
         ('fr', 'French'),
         ('de', 'German'),
