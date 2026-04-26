@@ -1,48 +1,82 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="mb-4">To'lov</h3>
+<style>
+.page{padding:2rem;max-width:500px;margin:0 auto}
+.page-title{font-size:24px;font-weight:600;letter-spacing:-0.5px;color:var(--t);margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--t2);margin-bottom:2rem}
+.pcard{background:var(--bg2);border:0.5px solid var(--bd);border-radius:12px;padding:1.5rem;margin-bottom:12px}
+.pcard-title{font-size:13px;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:1rem}
+.prow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--bd)}
+.prow:last-child{border-bottom:none}
+.prow-label{font-size:13px;color:var(--t2)}
+.prow-value{font-size:13px;font-weight:500;color:var(--t)}
+.ptotal{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;background:var(--bg3);border:0.5px solid var(--bd2);border-radius:10px;margin-bottom:1.5rem}
+.ptotal-label{font-size:14px;color:var(--t2)}
+.ptotal-value{font-size:24px;font-weight:600;color:var(--gr);letter-spacing:-0.5px}
+.stripe-btn{width:100%;padding:14px;border-radius:10px;font-size:15px;font-weight:600;background:#6772e5;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:background 0.15s}
+.stripe-btn:hover{background:#5469d4}
+.secure-note{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--t3);margin-top:1rem}
+</style>
 
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Loyiha:</span>
-                        <span class="fw-medium">{{ order.title }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Actor:</span>
-                        <span>{{ order.actor.user.username }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">So'z soni:</span>
-                        <span>{{ order.word_count }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Narx/so'z:</span>
-                        <span>${{ order.actor.price_per_word }}</span>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <span class="fw-bold">Jami:</span>
-                        <span class="fw-bold text-success fs-5">${{ order.total_price }}</span>
-                    </div>
-                </div>
+<div class="page">
+    <div class="page-title">Complete payment</div>
+    <div class="page-sub">Review your order before paying</div>
 
-                <form method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary w-100 btn-lg">
-                        💳 Stripe orqali to'lash
-                    </button>
-                </form>
-
-                <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary w-100 mt-2">
-                    Bekor qilish
-                </a>
-            </div>
+    <div class="pcard">
+        <div class="pcard-title">Order summary</div>
+        <div class="prow">
+            <span class="prow-label">Project</span>
+            <span class="prow-value">{{ order.title }}</span>
         </div>
+        <div class="prow">
+            <span class="prow-label">Voice actor</span>
+            <span class="prow-value">{{ order.actor.user.username }}</span>
+        </div>
+        <div class="prow">
+            <span class="prow-label">Language</span>
+            <span class="prow-value">{{ order.actor.get_language_display }}</span>
+        </div>
+        <div class="prow">
+            <span class="prow-label">Category</span>
+            <span class="prow-value">{{ order.actor.get_category_display }}</span>
+        </div>
+        <div class="prow">
+            <span class="prow-label">Word count</span>
+            <span class="prow-value">{{ order.word_count }} words</span>
+        </div>
+        <div class="prow">
+            <span class="prow-label">Price per word</span>
+            <span class="prow-value">${{ order.actor.price_per_word }}</span>
+        </div>
+        <div class="prow">
+            <span class="prow-label">Deadline</span>
+            <span class="prow-value">{{ order.deadline|date:"M d, Y" }}</span>
+        </div>
+    </div>
+
+    <div class="ptotal">
+        <span class="ptotal-label">Total amount</span>
+        <span class="ptotal-value">${{ order.total_price }}</span>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="stripe-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <rect x="2" y="5" width="20" height="14" rx="2" stroke="#fff" stroke-width="1.5"/>
+                <path d="M2 10h20" stroke="#fff" stroke-width="1.5"/>
+            </svg>
+            Pay ${{ order.total_price }} with Stripe
+        </button>
+    </form>
+
+    <div class="secure-note">
+        🔒 Secured by Stripe — your card info is never stored
+    </div>
+
+    <div style="text-align:center;margin-top:1.5rem">
+        <a href="{% url 'my_orders' %}" style="font-size:13px;color:var(--t3)">← Cancel and go back</a>
     </div>
 </div>
 {% endblock %}

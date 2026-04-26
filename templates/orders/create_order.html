@@ -1,41 +1,100 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-7">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
+<style>
+.page{padding:2rem;max-width:600px;margin:0 auto}
+.page-header{margin-bottom:2rem}
+.page-title{font-size:24px;font-weight:600;letter-spacing:-0.5px;color:var(--t);margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--t2)}
+.actor-info{background:var(--bg2);border:0.5px solid var(--bd);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:14px}
+.actor-av{width:48px;height:48px;border-radius:50%;background:var(--bg3);border:0.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--ac2);flex-shrink:0}
+.actor-name{font-size:15px;font-weight:500;color:var(--t)}
+.actor-meta{font-size:12px;color:var(--t3);margin-top:3px}
+.actor-price{margin-left:auto;text-align:right}
+.actor-price-val{font-size:16px;font-weight:600;color:var(--gr)}
+.actor-price-lbl{font-size:11px;color:var(--t3)}
+.form-card{background:var(--bg2);border:0.5px solid var(--bd);border-radius:12px;padding:1.5rem}
+.price-calc{background:var(--bg3);border:0.5px solid var(--bd2);border-radius:10px;padding:1rem 1.25rem;margin-top:1.5rem;margin-bottom:1.5rem}
+.price-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--t2);margin-bottom:6px}
+.price-row:last-child{margin-bottom:0;padding-top:8px;border-top:0.5px solid var(--bd);font-weight:600;font-size:15px;color:var(--t)}
+.price-row span:last-child{color:var(--gr)}
+.field-error{font-size:12px;color:#ff8888;margin-top:4px}
+</style>
 
-                <h3 class="mb-1">Buyurtma berish</h3>
-                <p class="text-muted mb-4">
-                    Actor: <strong>{{ actor.user.username }}</strong> ·
-                    ${{ actor.price_per_word }}/word ·
-                    {{ actor.get_language_display }}
-                </p>
+<div class="page">
+    <div class="page-header">
+        <div class="page-title">Place an order</div>
+        <div class="page-sub">Fill in the details for your voice project</div>
+    </div>
 
-                <form method="POST">
-                    {% csrf_token %}
-                    {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label fw-medium">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.errors %}
-                                <div class="text-danger small">{{ field.errors }}</div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-
-                    <div class="alert alert-info">
-                        <small>Narx avtomatik hisoblanadi: so'z soni × ${{ actor.price_per_word }}</small>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">
-                        Buyurtma yuborish
-                    </button>
-                </form>
-
+    <div class="actor-info">
+        <div class="actor-av">{{ actor.user.username|slice:":2"|upper }}</div>
+        <div>
+            <div class="actor-name">{{ actor.user.username }}</div>
+            <div class="actor-meta">{{ actor.get_language_display }} · {{ actor.get_category_display }}</div>
+            <div class="actor-meta" style="margin-top:4px">
+                {% if actor.is_available %}
+                    <span style="color:var(--gr)">● Available</span>
+                {% else %}
+                    <span style="color:#ff8888">● Unavailable</span>
+                {% endif %}
             </div>
+        </div>
+        <div class="actor-price">
+            <div class="actor-price-val">${{ actor.price_per_word }}</div>
+            <div class="actor-price-lbl">per word</div>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <form method="POST" id="orderForm">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="field-error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="price-calc">
+                <div class="price-row">
+                    <span>Word count</span>
+                    <span id="wordCount">0</span>
+                </div>
+                <div class="price-row">
+                    <span>Price per word</span>
+                    <span>${{ actor.price_per_word }}</span>
+                </div>
+                <div class="price-row">
+                    <span>Total</span>
+                    <span id="totalPrice">$0.00</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%">
+                Place order
+            </button>
+        </form>
+
+        <div style="text-align:center;margin-top:1rem">
+            <a href="{% url 'actor_list' %}" style="font-size:13px;color:var(--t3)">← Back to actors</a>
         </div>
     </div>
 </div>
+
+<script>
+var pricePerWord = {{ actor.price_per_word }};
+var wordInput = document.querySelector('input[name="word_count"]');
+if(wordInput){
+    wordInput.addEventListener('input', function(){
+        var words = parseInt(this.value) || 0;
+        var total = (words * pricePerWord).toFixed(2);
+        document.getElementById('wordCount').textContent = words;
+        document.getElementById('totalPrice').textContent = '$' + total;
+    });
+}
+</script>
 {% endblock %}
